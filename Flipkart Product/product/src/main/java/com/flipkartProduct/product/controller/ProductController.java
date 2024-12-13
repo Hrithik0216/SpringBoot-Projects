@@ -48,11 +48,8 @@ public class ProductController {
     @GetMapping("/getAllProducts")
     public ResponseEntity<?> getAllProducts(HttpServletResponse response, HttpServletRequest request) {
         String userName = request.getHeader("userName");
-        User user = memberRepository.findByUsername(userName);
-        user.getRoles().forEach(System.out::println);
-
-
-
+        String role = request.getHeader("role");
+        User user = memberRepository.findByUsername(role,userName);
         if (user != null) {
             return productService.getProducts();
         } else {
@@ -60,8 +57,6 @@ public class ProductController {
             System.out.println("Hrithik is not there");
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
         }
-
-
     }
 
     @GetMapping("/getProductsByCategory")
