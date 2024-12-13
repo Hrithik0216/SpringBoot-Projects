@@ -6,6 +6,7 @@ import com.flipkartProduct.product.model.Product;
 import com.mongodb.client.MongoClient;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -28,6 +29,7 @@ public class ProductService implements ProductServiceInterface {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
+    @Qualifier("primaryMongoTemplate")
     MongoTemplate mongoTemplate;
     @Autowired
     private MongoClient mongo;
@@ -70,13 +72,13 @@ public class ProductService implements ProductServiceInterface {
     public ResponseEntity<List<Product>> getProductsByCategory(String category) {
         Query query = new Query();
         Criteria criteria = Criteria.where("category").is(category);
-                //.and("price").gte(60000);
+        //.and("price").gte(60000);
         query.addCriteria(criteria);
-        List<Product> result= mongoTemplate.find(query, Product.class);
-        List<Product> finalResult= result.stream().filter(product-> Integer.parseInt(product.getPrice())>60000).collect(Collectors.toList());
-        if(finalResult.size()>0){
+        List<Product> result = mongoTemplate.find(query, Product.class);
+        List<Product> finalResult = result.stream().filter(product -> Integer.parseInt(product.getPrice()) > 60000).collect(Collectors.toList());
+        if (finalResult.size() > 0) {
             return ResponseEntity.ok(finalResult);
-        }else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
@@ -94,6 +96,7 @@ public class ProductService implements ProductServiceInterface {
 //        System.out.println(results.getMappedResults());
         return ResponseEntity.ok(results.getMappedResults());
     }
+
     @Override
     public ResponseEntity<List<ProductDTO>> getProductByMutipleMatchoperation(String category, long price) {
         // 1st Aggregation: Match Operation by category
