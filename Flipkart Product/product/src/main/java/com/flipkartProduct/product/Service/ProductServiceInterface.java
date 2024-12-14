@@ -11,8 +11,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ProductServiceInterface {
+    ResponseEntity<String> increaseProductByQuantity(Product product);
     ResponseEntity<String> postAProduct(Product product);
-    ResponseEntity<List<Product>> postProducts(List<Product> products);
+    ResponseEntity<String> postProducts(List<Product> products);
     ResponseEntity<List<ProductDTO>> getProducts();
     ResponseEntity<List<Product>> getProductsByCategory(String category);
     ResponseEntity<List<ProductDTO>> getProductByMatchoperation(String category);

@@ -1,6 +1,5 @@
-package com.flipkartProduct.product.Service.CutomImplementationRepository;
+package com.flipkartProduct.product.Repository.CutomImplementationRepository.MemberRepository;
 
-import com.flipkartProduct.product.model.Role;
 import com.flipkartProduct.product.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

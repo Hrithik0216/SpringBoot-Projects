@@ -1,8 +1,8 @@
 package com.flipkartProduct.product.controller;
 
 import com.flipkartProduct.product.DTO.ProductDTO;
-import com.flipkartProduct.product.Service.CutomImplementationRepository.MemberRepositoryCustom;
-import com.flipkartProduct.product.Service.CutomImplementationRepository.MemberRepositoryCustomImpl;
+import com.flipkartProduct.product.Repository.ProductRepository;
+import com.flipkartProduct.product.Repository.CutomImplementationRepository.MemberRepository.MemberRepositoryCustom;
 import com.flipkartProduct.product.Service.ProductService;
 import com.flipkartProduct.product.model.Product;
 import com.flipkartProduct.product.model.User;
@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,9 +17,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -29,32 +26,50 @@ public class ProductController {
     ProductService productService;
 
     @Autowired
-    @Qualifier("secondaryMongoTemplate")
-    MongoTemplate secondaryMongoTemplate;
+    @Qualifier("primaryMongoTemplate")
+    MongoTemplate mongoTemplate;
+
 
     @Autowired
     MemberRepositoryCustom memberRepository;
 
+    @Autowired
+    ProductRepository productRepository;
+
+    //Adding a single product by verifying if it exists
     @PostMapping("/addProduct")
-    public ResponseEntity<String> addProducts(@RequestBody Product product) {
+    public ResponseEntity<String> addProduct(HttpServletRequest request, @RequestBody Product product) {
+        String productName = product.getDataProductName();
+        String user = request.getHeader("user");
+        if (user != null && user.equals("ROLE_ADMIN")) {
+            if (productRepository.findBydataProductName(productName)) {
+                return productService.increaseProductByQuantity(product);
+            }
+        }
         return productService.postAProduct(product);
     }
 
-    @PostMapping("/addProducts")
-    public ResponseEntity<List<Product>> addProducts(@RequestBody List<Product> products) {
-        return productService.postProducts(products);
+    @PostMapping("/addMultipleProducts")
+    public ResponseEntity<String> addProducts(HttpServletRequest request, @RequestBody List<Product> products) {
+        String user = request.getHeader("user");
+        if (user != null && user.equals("ROLE_ADMIN")) {
+            productService.postProducts(products);
+            return ResponseEntity.ok().body("Added Products Successfully");
+        }
+        return ResponseEntity.badRequest().body("User is not admin");
+
     }
+    //
 
     @GetMapping("/getAllProducts")
     public ResponseEntity<?> getAllProducts(HttpServletResponse response, HttpServletRequest request) {
         String userName = request.getHeader("userName");
         String role = request.getHeader("role");
-        User user = memberRepository.findByUsername(role,userName);
+        User user = memberRepository.findByUsername(role, userName);
         if (user != null) {
             return productService.getProducts();
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            System.out.println("Hrithik is not there");
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
         }
     }

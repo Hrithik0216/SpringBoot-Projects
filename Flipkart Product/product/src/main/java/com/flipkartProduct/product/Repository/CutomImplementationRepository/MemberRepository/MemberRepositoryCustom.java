@@ -1,4 +1,4 @@
-package com.flipkartProduct.product.Service.CutomImplementationRepository;
+package com.flipkartProduct.product.Repository.CutomImplementationRepository.MemberRepository;
 
 import com.flipkartProduct.product.model.User;
 

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,6 +35,25 @@ public class ProductService implements ProductServiceInterface {
     @Autowired
     private MongoClient mongo;
 
+    //Adding a single product by verifying if it exists
+    @Override
+    public ResponseEntity<String> increaseProductByQuantity(Product product) {
+        Query query = new Query(Criteria.where("dataProductName").is(product.getDataProductName()));
+        List<Product> result = mongoTemplate.find(query,Product.class);
+        long quantity= result.stream().mapToLong(Product::getQuantity).sum();
+        Update update = new Update();
+        update.set("quantity", product.getQuantity()+quantity);
+        mongoTemplate.updateFirst(query, update, Product.class);
+        return ResponseEntity.ok().body("Update the " + product.getProduct() + " by " + product.getQuantity());
+    }
+
+    @Override
+    public ResponseEntity<String> postAProduct(Product product) {
+        productRepository.save(product);
+        return ResponseEntity.ok("Product saved successfully");
+    }
+
+
     @Override
     public ResponseEntity<List<Product>> getAllProductsUsingPagination(Pageable pageable) {
         Page<Product> result = productRepository.findAll(pageable);
@@ -46,15 +66,13 @@ public class ProductService implements ProductServiceInterface {
         return ResponseEntity.ok(result.getContent());
     }
 
-    @Override
-    public ResponseEntity<String> postAProduct(Product product) {
-        productRepository.save(product);
-        return ResponseEntity.ok("Product saved successfully");
-    }
+
 
     @Override
-    public ResponseEntity<List<Product>> postProducts(List<Product> products) {
-        return ResponseEntity.ok(productRepository.saveAll(products));
+    public ResponseEntity<String> postProducts(List<Product> products) {
+        System.out.println("products"+ products.size()+" "+products);
+         productRepository.saveAll(products);
+         return ResponseEntity.ok().body("Product saved successfully");
     }
 
     @Override
@@ -139,5 +157,6 @@ public class ProductService implements ProductServiceInterface {
 
         return ResponseEntity.ok(productDTOs);
     }
+
 
 }

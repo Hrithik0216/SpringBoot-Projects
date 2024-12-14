@@ -5,6 +5,16 @@ public class ProductDTO {
     private String price;
     private int mobileCategoryTypeCount;
     private Double numericPrice;  // This will store the converted price
+    private long quantity;
+
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
 
     // Getters and Setters
     public String getProduct() {

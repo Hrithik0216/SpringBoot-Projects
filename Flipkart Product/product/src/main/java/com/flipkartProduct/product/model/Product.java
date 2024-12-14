@@ -10,6 +10,26 @@ public class Product {
     String product;
     String category;
     String price;
+    long quantity;
+    String dataProductName;
+
+    public String getDataProductName() {
+        return dataProductName;
+    }
+
+    public void setDataProductName(String dataProductName) {
+        this.dataProductName = dataProductName;
+    }
+
+
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
 
     public String getProduct() {
         return product;
