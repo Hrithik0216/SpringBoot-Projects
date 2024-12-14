@@ -1,9 +1,6 @@
 package com.flipkartProduct.product.cart.model;
 
-import com.flipkartProduct.product.model.Product;
-import com.flipkartProduct.product.model.User;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;

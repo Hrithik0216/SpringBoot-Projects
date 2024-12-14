@@ -1,4 +1,4 @@
-package com.flipkartProduct.product.model;
+package com.flipkartProduct.product.members.model;
 
 public enum EmployeeRole {
   ROLE_USER,

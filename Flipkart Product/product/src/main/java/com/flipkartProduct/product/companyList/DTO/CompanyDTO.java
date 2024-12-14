@@ -1,16 +1,9 @@
-package com.flipkartProduct.product.model;
+package com.flipkartProduct.product.companyList.DTO;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "sellerCompany")
-public class SellerCompany {
-    @Id
-    private String id;
+public class CompanyDTO {
     private String companyName;
     private String companyAddress;
     private String companyPhone;
-
 
     public String getCompanyName() {
         return companyName;
@@ -35,4 +28,6 @@ public class SellerCompany {
     public void setCompanyPhone(String companyPhone) {
         this.companyPhone = companyPhone;
     }
+
+
 }

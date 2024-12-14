@@ -1,4 +1,4 @@
-package com.flipkartProduct.product.DTO;
+package com.flipkartProduct.product.product.dto;
 
 public class ProductDTO {
     private String product;

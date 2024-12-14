@@ -1,6 +1,6 @@
-package com.flipkartProduct.product.Repository.CutomImplementationRepository.MemberRepository;
+package com.flipkartProduct.product.members.repository;
 
-import com.flipkartProduct.product.model.User;
+import com.flipkartProduct.product.members.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,6 +17,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     MongoTemplate secondaryMongoTemplate;
 
 
+    //Not working
     @Override
     public User findByUsername(String clientRole, String username) {
         Query query = new Query(Criteria.where("username").is(username));

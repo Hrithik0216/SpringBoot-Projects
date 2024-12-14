@@ -3,7 +3,7 @@ package com.flipkartProduct.product.cart.controller;
 import com.flipkartProduct.product.cart.DTO.CartDto;
 import com.flipkartProduct.product.cart.model.Cart;
 import com.flipkartProduct.product.cart.service.CartService;
-import com.flipkartProduct.product.model.User;
+import com.flipkartProduct.product.members.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

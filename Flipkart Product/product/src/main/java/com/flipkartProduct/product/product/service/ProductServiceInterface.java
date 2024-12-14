@@ -1,12 +1,8 @@
-package com.flipkartProduct.product.Service;
+package com.flipkartProduct.product.product.service;
 
-import com.flipkartProduct.product.DTO.ProductDTO;
-import com.flipkartProduct.product.model.Product;
-import org.springframework.data.domain.Sort;
+import com.flipkartProduct.product.product.dto.ProductDTO;
+import com.flipkartProduct.product.product.model.Product;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 

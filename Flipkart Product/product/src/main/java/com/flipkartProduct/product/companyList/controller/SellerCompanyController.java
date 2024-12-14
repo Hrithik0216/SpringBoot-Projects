@@ -1,11 +1,10 @@
-package com.flipkartProduct.product.controller;
+package com.flipkartProduct.product.companyList.controller;
 
-import com.flipkartProduct.product.Service.SellerCompanyService;
+import com.flipkartProduct.product.companyList.Service.SellerCompanyService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

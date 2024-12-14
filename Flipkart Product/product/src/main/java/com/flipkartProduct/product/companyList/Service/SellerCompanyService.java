@@ -1,8 +1,7 @@
-package com.flipkartProduct.product.Service;
+package com.flipkartProduct.product.companyList.Service;
 
-import com.flipkartProduct.product.DTO.CompanyDTO;
-import com.flipkartProduct.product.Repository.SellerCompanyRepository;
-import com.flipkartProduct.product.model.SellerCompany;
+import com.flipkartProduct.product.companyList.repository.SellerCompanyRepository;
+import com.flipkartProduct.product.companyList.model.SellerCompany;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

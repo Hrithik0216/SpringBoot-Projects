@@ -1,6 +1,6 @@
-package com.flipkartProduct.product.Repository.CutomImplementationRepository.ProductRepository;
+package com.flipkartProduct.product.product.repository;
 
-import com.flipkartProduct.product.model.Product;
+import com.flipkartProduct.product.product.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;

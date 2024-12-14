@@ -1,4 +1,4 @@
-package com.flipkartProduct.product.model;
+package com.flipkartProduct.product.members.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

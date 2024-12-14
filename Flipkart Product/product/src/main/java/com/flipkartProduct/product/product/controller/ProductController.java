@@ -1,11 +1,11 @@
-package com.flipkartProduct.product.controller;
+package com.flipkartProduct.product.product.controller;
 
-import com.flipkartProduct.product.DTO.ProductDTO;
-import com.flipkartProduct.product.Repository.ProductRepository;
-import com.flipkartProduct.product.Repository.CutomImplementationRepository.MemberRepository.MemberRepositoryCustom;
-import com.flipkartProduct.product.Service.ProductService;
-import com.flipkartProduct.product.model.Product;
-import com.flipkartProduct.product.model.User;
+import com.flipkartProduct.product.product.dto.ProductDTO;
+import com.flipkartProduct.product.product.repository.ProductRepository;
+import com.flipkartProduct.product.members.repository.MemberRepositoryCustom;
+import com.flipkartProduct.product.product.service.ProductService;
+import com.flipkartProduct.product.product.model.Product;
+import com.flipkartProduct.product.members.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

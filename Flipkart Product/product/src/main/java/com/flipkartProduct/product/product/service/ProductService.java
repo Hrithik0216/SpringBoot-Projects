@@ -1,13 +1,11 @@
-package com.flipkartProduct.product.Service;
+package com.flipkartProduct.product.product.service;
 
-import com.flipkartProduct.product.DTO.ProductDTO;
-import com.flipkartProduct.product.Repository.ProductRepository;
-import com.flipkartProduct.product.model.Product;
+import com.flipkartProduct.product.product.dto.ProductDTO;
+import com.flipkartProduct.product.product.repository.ProductRepository;
+import com.flipkartProduct.product.product.model.Product;
 import com.mongodb.client.MongoClient;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -17,12 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @Service

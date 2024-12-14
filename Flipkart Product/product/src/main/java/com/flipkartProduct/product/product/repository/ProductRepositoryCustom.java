@@ -1,6 +1,6 @@
-package com.flipkartProduct.product.Repository.CutomImplementationRepository.ProductRepository;
+package com.flipkartProduct.product.product.repository;
 
-import com.flipkartProduct.product.model.Product;
+import com.flipkartProduct.product.product.model.Product;
 
 public interface ProductRepositoryCustom {
     boolean findBydataProductName(String productName);

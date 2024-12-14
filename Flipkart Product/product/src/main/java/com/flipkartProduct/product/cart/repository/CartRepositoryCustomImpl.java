@@ -1,10 +1,10 @@
 package com.flipkartProduct.product.cart.repository;
 
-import com.flipkartProduct.product.Repository.ProductRepository;
+import com.flipkartProduct.product.product.repository.ProductRepository;
 import com.flipkartProduct.product.cart.DTO.CartDto;
 import com.flipkartProduct.product.cart.model.Cart;
 import com.flipkartProduct.product.cart.model.CartItem;
-import com.flipkartProduct.product.model.Product;
+import com.flipkartProduct.product.product.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
