@@ -17,6 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // Impo
 import org.springframework.security.crypto.password.PasswordEncoder; // Import for password encoder interface
 import org.springframework.security.web.SecurityFilterChain; // Import for security filter chain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // Import for username/password authentication filter
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import java.util.Arrays;
 
 /**
  * Security configuration class to set up Spring Security.
@@ -36,6 +40,7 @@ public class WebSecurityConfig {
    *
    * @return AuthTokenFilter instance
    */
+
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
     return new AuthTokenFilter(); // Returns a new instance of AuthTokenFilter
@@ -111,5 +116,20 @@ public class WebSecurityConfig {
             UsernamePasswordAuthenticationFilter.class);
 
     return http.build(); // Build and return the security filter chain
+  }
+
+
+  @Bean
+  public CorsFilter corsFilter() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173", "https://example.com"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowCredentials(true);
+    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+    configuration.setMaxAge(3600L);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return new CorsFilter(source);
   }
 }

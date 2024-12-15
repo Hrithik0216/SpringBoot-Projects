@@ -17,8 +17,10 @@ import com.hungrycoder.spring.repository.UserRepository;
 import com.hungrycoder.spring.security.jwt.JwtUtils;
 import com.hungrycoder.spring.security.services.UserDetailsImpl;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -58,7 +60,8 @@ public class AuthController {
 	 * @return A ResponseEntity containing the JWT response or an error message.
 	 */
 	@PostMapping("/signin")
- 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	@CrossOrigin(origins="http://127.0.0.1:5173", maxAge = 3600)
+ 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
 		// Authenticate the user with the provided username and password
 		Authentication authentication = authenticationManager.authenticate(
