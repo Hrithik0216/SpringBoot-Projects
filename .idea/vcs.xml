@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/FrontEnd for E-commerce/Login-Page-In-React" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/FrontEnd for E-commerce/react-custom-toast-notification" vcs="Git" />
   </component>
 </project>
