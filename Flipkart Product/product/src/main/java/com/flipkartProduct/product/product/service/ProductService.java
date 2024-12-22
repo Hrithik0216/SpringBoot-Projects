@@ -77,6 +77,7 @@ public class ProductService implements ProductServiceInterface {
             ProductDTO pr = new ProductDTO();
             pr.setProduct(product.getProduct());
             pr.setPrice(product.getPrice());
+            pr.setQuantity(product.getQuantity());
             return pr;
         }).collect(Collectors.toList());
         return ResponseEntity.ok(result);

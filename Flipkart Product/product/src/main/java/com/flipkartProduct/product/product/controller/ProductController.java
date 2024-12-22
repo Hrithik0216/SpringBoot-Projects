@@ -8,6 +8,8 @@ import com.flipkartProduct.product.product.model.Product;
 import com.flipkartProduct.product.members.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -18,10 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
     @Autowired
     ProductService productService;
 
@@ -36,6 +40,17 @@ public class ProductController {
     @Autowired
     ProductRepository productRepository;
 
+    @GetMapping("/dummyToCheckLogger")
+    public ResponseEntity<?> dummyToCheckLogger(HttpServletRequest request) {
+        String user = request.getHeader("user");
+        if(user!=null && user.equals("ROLE_ADMIN")){
+            LOGGER.info(user);
+            return ResponseEntity.ok().body("Super");
+        }
+        LOGGER.error("Unauthorized use");
+        return ResponseEntity.badRequest().build();
+    }
+
     //Adding a single product by verifying if it exists
     @PostMapping("/addProduct")
     public ResponseEntity<String> addProduct(HttpServletRequest request, @RequestBody Product product) {
@@ -44,9 +59,13 @@ public class ProductController {
         if (user != null && user.equals("ROLE_ADMIN")) {
             if (productRepository.findBydataProductName(productName)) {
                 return productService.increaseProductByQuantity(product);
+            }else{
+                return productService.postAProduct(product);
             }
         }
-        return productService.postAProduct(product);
+        LOGGER.error("Unauthorized user trying to add the product");
+        return ResponseEntity.ok().body("Unauticaticated User");
+
     }
 
     @PostMapping("/addMultipleProducts")
@@ -61,10 +80,15 @@ public class ProductController {
     }
     //
 
+
+    /*
+    * The api is used
+    * */
     @GetMapping("/getAllProducts")
     public ResponseEntity<?> getAllProducts(HttpServletResponse response, HttpServletRequest request) {
-        String userName = request.getHeader("userName");
+        String userName = request.getHeader("username");
         String role = request.getHeader("role");
+        LOGGER.info("Username is : "+ userName +"Role is : "+ role);
         User user = memberRepository.findByUsername(role, userName);
         if (user != null) {
             return productService.getProducts();
