@@ -78,11 +78,25 @@ public class ProductController {
         return ResponseEntity.badRequest().body("User is not admin");
 
     }
-    //
-
-
     /*
-    * The api is used
+     * Used this api for fetching all product details.
+     * */
+
+    @GetMapping("/getAllProductsById")
+    public ResponseEntity<?> getAllProductsById(HttpServletResponse response, HttpServletRequest request) {
+        String id = request.getHeader("userID");
+        String role = request.getHeader("role");
+        LOGGER.info("Username is : "+ id +"Role is : "+ role);
+        User user = memberRepository.findByID(id, role);
+        if (user != null) {
+            return productService.getProducts();
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+        }
+    }
+    /*
+    * Dont use this api
     * */
     @GetMapping("/getAllProducts")
     public ResponseEntity<?> getAllProducts(HttpServletResponse response, HttpServletRequest request) {

@@ -30,4 +30,16 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         Optional<Product> productOptional = Optional.ofNullable(product);
         return productOptional.isPresent()?productOptional.get():null;
     }
+
+    @Override
+    public String findByUserId(String userId) {
+        Query query = new Query(Criteria.where("userId").is(userId));
+        Product result = mongoTemplate.findOne(query,Product.class);
+        Optional<Product> optionalProduct = Optional.ofNullable(result);
+        if(optionalProduct.isPresent()){
+            return optionalProduct.get().getId();
+        }else{
+            return null;
+        }
+    }
 }

@@ -44,4 +44,15 @@ public class CartRepositoryCustomImpl implements CartRepositoryCustom {
         }
     }
 
+    @Override
+    public Cart findCartByUserId(String userId) {
+        Query query = new Query(Criteria.where("userId").is(userId));
+        Optional<Cart> cartResult = Optional.ofNullable(primaryMongoTemplate.findOne(query,Cart.class));
+        if(cartResult.isPresent()){
+            return cartResult.get();
+        }else{
+            return null;
+        }
+    }
+
 }

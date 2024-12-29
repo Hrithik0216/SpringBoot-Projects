@@ -13,11 +13,26 @@ public class Cart {
 
     private List<CartItem> productList;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+
     public Cart(String userId, List<CartItem> productList) {
         this.userId = userId;
         this.productList = productList;
     }
+    public Cart(List<CartItem> productList) {
+        this.productList = productList;
+    }
+    public Cart(){
 
+    }
 
 
     public String getUser() {

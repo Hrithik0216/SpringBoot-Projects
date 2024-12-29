@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface CartRepositoryCustom {
     ResponseEntity<CartDto> findCartByCustomerId(String customerId);
+    Cart findCartByUserId(String userId);
 }

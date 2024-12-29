@@ -5,6 +5,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Product {
+
+
     @Id
     String id;
     String product;
@@ -12,7 +14,13 @@ public class Product {
     String price;
     long quantity;
     String dataProductName;
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getDataProductName() {
         return dataProductName;
     }

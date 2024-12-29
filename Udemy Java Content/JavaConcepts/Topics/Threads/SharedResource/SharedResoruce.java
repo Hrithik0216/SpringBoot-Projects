@@ -4,7 +4,6 @@ public class SharedResoruce {
     private boolean isSharedResource = false;
 
     public synchronized void addItem() {
-
         isSharedResource = true;
         System.out.println(Thread.currentThread().getName() + "Producer calls the notify method");
         notifyAll();

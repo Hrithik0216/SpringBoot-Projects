@@ -30,4 +30,14 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         return null;
     }
 
+    @Override
+    public User findByID(String id, String clientRole) {
+        Query query = new Query(Criteria.where("id").is(id));
+        User userObj = secondaryMongoTemplate.findById(id,User.class);
+        List<String> roleNames = userObj.getRoles().stream().map((role)->role.getName().name()).collect(Collectors.toList());
+        boolean match = roleNames.stream().anyMatch((role)->role.equals(clientRole));
+        if(match) return userObj;
+        return null;
+    }
+
 }

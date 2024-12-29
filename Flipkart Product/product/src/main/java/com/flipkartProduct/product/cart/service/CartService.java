@@ -9,11 +9,14 @@ import com.flipkartProduct.product.product.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService implements CartServiceInterface {
@@ -34,18 +37,26 @@ public class CartService implements CartServiceInterface {
 
     @Override
     public ResponseEntity<String> addToCart(Cart cart, String userId) {
+
         List<CartItem> cartItems = cart.getProductList();
         long quantity = cartItems.stream().mapToLong(CartItem::getQuantity).sum();
-        String dataProductName = cartItems.stream().map(CartItem::getDataProductName).findFirst().toString();
-        Optional<Product> product = Optional.ofNullable(productRepository.findBydataProductNameForProduct(dataProductName));
-        if(product.isPresent()) {
-            System.out.println(product.get().toString());
-            if (quantity > product.get().getQuantity()) {
-                return ResponseEntity.badRequest().body("Quantity exceeded");
-            }
+        String productId = cartItems.stream()
+                .map(CartItem::getProductId)
+                .findFirst()
+                .orElse(null);
+        System.out.print(productId);
+        if (productId == null) {
+            return ResponseEntity.badRequest().body("Product ID is missing in the request.");
         }
-
-        cartRepository.save(new Cart(userId,cart.getProductList()));
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (!productOptional.isPresent()) {
+            return ResponseEntity.badRequest().body("Product ID is invalid.");
+        }
+        Product product = productOptional.get();
+        if (product.getQuantity() < quantity) {
+            return ResponseEntity.badRequest().body("Insufficient stock for product:");
+        }
+        cartRepository.save(new Cart(userId, cart.getProductList()));
         return ResponseEntity.ok().body("Product added to Cart");
     }
 
@@ -57,5 +68,23 @@ public class CartService implements CartServiceInterface {
     @Override
     public ResponseEntity<String> updateCart(Cart cart) {
         return null;
+    }
+
+    @Override
+    public Cart addToExistingCartOfExistingUser(String userId, List<CartItem> existingCartItem, List<CartItem> newCartItem) {
+        Map<String, CartItem> map = existingCartItem.stream()
+                .collect(Collectors.toMap(CartItem::getProductId, item -> item));
+
+        for (CartItem temp : newCartItem) {
+            CartItem result = map.get(temp.getProductId());
+            if (result != null) {
+                // Update quantity if the product already exists
+                result.setQuantity(result.getQuantity() + temp.getQuantity());
+            } else {
+                // Add new product to the map
+                map.put(temp.getProductId(), temp);
+            }
+        }
+        return new Cart(userId, new ArrayList<>(map.values()));
     }
 }

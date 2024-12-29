@@ -75,6 +75,7 @@ public class ProductService implements ProductServiceInterface {
     public ResponseEntity<List<ProductDTO>> getProducts() {
         List<ProductDTO> result = productRepository.findAll().stream().map(product -> {
             ProductDTO pr = new ProductDTO();
+            pr.setProductId(product.getId());
             pr.setProduct(product.getProduct());
             pr.setPrice(product.getPrice());
             pr.setQuantity(product.getQuantity());
