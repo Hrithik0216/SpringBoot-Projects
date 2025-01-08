@@ -37,7 +37,6 @@ public class CartService implements CartServiceInterface {
 
     @Override
     public ResponseEntity<String> addToCart(Cart cart, String userId) {
-
         List<CartItem> cartItems = cart.getProductList();
         long quantity = cartItems.stream().mapToLong(CartItem::getQuantity).sum();
         String productId = cartItems.stream()

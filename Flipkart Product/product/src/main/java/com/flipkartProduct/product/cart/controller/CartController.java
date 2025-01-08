@@ -74,7 +74,6 @@ public class CartController {
         }
     }
 
-
     @GetMapping("getMyCart/{userId}")
     public ResponseEntity<CartDto> getCart(@PathVariable("userId") String userId) {
         Optional<User> user = Optional.of(secondaryMongoTemplate.findById(userId, User.class));
