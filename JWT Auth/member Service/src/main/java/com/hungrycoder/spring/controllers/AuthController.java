@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.hungrycoder.spring.ValidationUtils.EmailValidate;
 import com.hungrycoder.spring.models.EmployeeRole;
 import com.hungrycoder.spring.models.Role;
 import com.hungrycoder.spring.models.User;
@@ -84,7 +85,6 @@ public class AuthController {
 
 		// Return a response containing the JWT and user details
 		return ResponseEntity.ok(new JwtResponse(jwt,
-				userDetails.getId(),
 				userDetails.getUsername(),
 				userDetails.getEmail(),
 				roles));
@@ -113,45 +113,50 @@ public class AuthController {
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
 
-		// Create a new user's account
-		User user = new User(signUpRequest.getUsername(),
-				signUpRequest.getEmail(),
-				encoder.encode(signUpRequest.getPassword())); // Encode the password
+		if(EmailValidate.validateEmail(signUpRequest.getEmail())){
+			// Create a new user's account
+			User user = new User(signUpRequest.getUsername(),
+					signUpRequest.getEmail(),
+					encoder.encode(signUpRequest.getPassword())); // Encode the password
 
-		Set<String> strRoles = signUpRequest.getRoles(); // Get the roles from the request
-		Set<Role> roles = new HashSet<>(); // Initialize a set to hold the user roles
+			Set<String> strRoles = signUpRequest.getRoles(); // Get the roles from the request
+			Set<Role> roles = new HashSet<>(); // Initialize a set to hold the user roles
 
-		// Assign roles based on the request or default to user role
-		if (strRoles == null) {
-			Role userRole = roleRepository.findByName(EmployeeRole.ROLE_USER)
-					.orElseThrow(()-> new RuntimeException("Error: Role not found!"));
-			roles.add(userRole);
-		} else {
-			strRoles.forEach(role -> {
-				switch (role) {
-					case "admin":
-						Role adminRole = roleRepository.findByName(EmployeeRole.ROLE_ADMIN)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(adminRole);
-						break;
-					case "mod":
-						Role modRole = roleRepository.findByName(EmployeeRole.ROLE_MODERATOR)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(modRole);
-						break;
-					default:
-						Role userRole = roleRepository.findByName(EmployeeRole.ROLE_USER)
-								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-						roles.add(userRole);
-				}
-			});
+			// Assign roles based on the request or default to user role
+			if (strRoles == null) {
+				Role userRole = roleRepository.findByName(EmployeeRole.ROLE_USER)
+						.orElseThrow(()-> new RuntimeException("Error: Role not found!"));
+				roles.add(userRole);
+			} else {
+				strRoles.forEach(role -> {
+					switch (role) {
+						case "admin":
+							Role adminRole = roleRepository.findByName(EmployeeRole.ROLE_ADMIN)
+									.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+							roles.add(adminRole);
+							break;
+						case "mod":
+							Role modRole = roleRepository.findByName(EmployeeRole.ROLE_MODERATOR)
+									.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+							roles.add(modRole);
+							break;
+						default:
+							Role userRole = roleRepository.findByName(EmployeeRole.ROLE_USER)
+									.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+							roles.add(userRole);
+					}
+				});
+			}
+
+			// Assign roles to the user and save it to the database
+			user.setRoles(roles);
+			userRepository.save(user);
+
+			// Return a success message upon successful registration
+			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		}else{
+			return  ResponseEntity.badRequest().body("Error: Email is not Valid!");
 		}
 
-		// Assign roles to the user and save it to the database
-		user.setRoles(roles);
-		userRepository.save(user);
-
-		// Return a success message upon successful registration
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 }

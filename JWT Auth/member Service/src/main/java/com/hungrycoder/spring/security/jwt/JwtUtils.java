@@ -39,7 +39,7 @@ public class JwtUtils {
 
     // Build and return the JWT token
     return Jwts.builder()
-            .setSubject((userPrincipal.getUsername())) // Set the subject (username)
+            .setSubject((userPrincipal.getId())) // Set the subject (useriId from member service database)
             .setIssuedAt(new Date()) // Set the issue date
             .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)) // Set the expiration date
             .signWith(key(), SignatureAlgorithm.HS256)
