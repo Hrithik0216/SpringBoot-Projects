@@ -61,7 +61,7 @@ public class AuthController {
 	 * @return A ResponseEntity containing the JWT response or an error message.
 	 */
 	@PostMapping("/signin")
-	@CrossOrigin(origins="http://127.0.0.1:5173", maxAge = 3600)
+//	@CrossOrigin(origins="http://localhost:3000", maxAge = 3600)
  	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
 		// Authenticate the user with the provided username and password

@@ -122,7 +122,7 @@ public class WebSecurityConfig {
   @Bean
   public CorsFilter corsFilter() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173", "https://example.com"));
+    configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5173", "https://example.com","http://localhost:3000"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowCredentials(true);
     configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));

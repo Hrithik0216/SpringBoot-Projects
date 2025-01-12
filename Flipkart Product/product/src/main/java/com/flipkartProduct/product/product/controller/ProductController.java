@@ -6,6 +6,7 @@ import com.flipkartProduct.product.members.repository.MemberRepositoryCustom;
 import com.flipkartProduct.product.product.service.ProductService;
 import com.flipkartProduct.product.product.model.Product;
 import com.flipkartProduct.product.members.model.User;
+import com.flipkartProduct.product.utils.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -42,12 +43,19 @@ public class ProductController {
 
     @GetMapping("/dummyToCheckLogger")
     public ResponseEntity<?> dummyToCheckLogger(HttpServletRequest request) {
-        String user = request.getHeader("user");
-        if(user!=null && user.equals("ROLE_ADMIN")){
-            LOGGER.info(user);
-            return ResponseEntity.ok().body("Super");
+        String authorization= request.getHeader("Authorization");
+        if(authorization!=null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7);
+            try{
+                String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
+                boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
+                LOGGER.info("userRole: "+userRole+" , userId: "+userId);
+                return ResponseEntity.ok().body("Super");
+            }catch (Exception e){
+                System.out.println(e);
+            }
         }
-        LOGGER.error("Unauthorized use");
+        LOGGER.error("Unauthorized user");
         return ResponseEntity.badRequest().build();
     }
 
