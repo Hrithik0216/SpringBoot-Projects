@@ -1,12 +1,15 @@
 package com.hungrycoder.spring.security.jwt;
 
 import java.security.Key; // Import Key for cryptographic operations
+import java.util.ArrayList;
 import java.util.Date; // Import Date for handling date and time
+import java.util.List;
 
 import org.slf4j.Logger; // Import Logger for logging errors and information
 import org.slf4j.LoggerFactory; // Import LoggerFactory for creating Logger instances
 import org.springframework.beans.factory.annotation.Value; // Import Value for dependency injection
 import org.springframework.security.core.Authentication; // Import Authentication for handling user authentication
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component; // Import Component for Spring component scanning
 import com.hungrycoder.spring.security.services.UserDetailsImpl; // Import custom user details implementation
 import io.jsonwebtoken.*; // Import the JJWT library classes for handling JWT
@@ -36,10 +39,12 @@ public class JwtUtils {
   public String generateJwtToken(Authentication authentication) {
     // Get the user details from the authentication object
     UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
+    List<GrantedAuthority> listAuthorities = new ArrayList<GrantedAuthority>();
+    listAuthorities.addAll(userPrincipal.getAuthorities());
     // Build and return the JWT token
     return Jwts.builder()
-            .setSubject((userPrincipal.getId())) // Set the subject (useriId from member service database)
+            .setSubject((userPrincipal.getId()))
+            .claim("roles",listAuthorities.stream().map(GrantedAuthority::getAuthority).toList())// Set the subject (useriId from member service database)
             .setIssuedAt(new Date()) // Set the issue date
             .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)) // Set the expiration date
             .signWith(key(), SignatureAlgorithm.HS256)
