@@ -2,9 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/FrontEnd for E-commerce/Login-Page-In-React" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/FrontEnd for E-commerce/react-custom-toast-notification" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/coding-interview-university" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/react-login-register-page" vcs="Git" />
   </component>
 </project>
