@@ -40,4 +40,13 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
         return null;
     }
 
+    @Override
+    public User findByUserId(String id) {
+        User userObj = secondaryMongoTemplate.findById(id,User.class);
+        if(userObj!=null){
+            return userObj;
+        }
+        return null;
+    }
+
 }

@@ -90,19 +90,57 @@ public class ProductController {
      * Used this api for fetching all product details.
      * */
 
+//    @GetMapping("/getAllProductsById")
+//    public ResponseEntity<?> getAllProductsById(HttpServletResponse response, HttpServletRequest request) {
+//        String id = request.getHeader("userID");
+//        String role = request.getHeader("role");
+//        String authorization= request.getHeader("Authorization");
+//        LOGGER.info("Username is : "+ id +"Role is : "+ role);
+//        User user = memberRepository.findByID(id, role);
+//        if (user != null) {
+//            return productService.getProducts();
+//        } else {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+//        }
+//    }
+
     @GetMapping("/getAllProductsById")
     public ResponseEntity<?> getAllProductsById(HttpServletResponse response, HttpServletRequest request) {
-        String id = request.getHeader("userID");
-        String role = request.getHeader("role");
-        LOGGER.info("Username is : "+ id +"Role is : "+ role);
-        User user = memberRepository.findByID(id, role);
-        if (user != null) {
-            return productService.getProducts();
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+        String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7);
+            try {
+                String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
+                boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
+                LOGGER.info("userRole: " + userRole + " , userId: " + userId);
+                User user = memberRepository.findByUserId(userId);
+                if (user != null) {
+                    return productService.getProducts();
+                } else {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
         }
+        return ResponseEntity.badRequest().build();
     }
+
+//        String id = request.getHeader("userID");
+//        String role = request.getHeader("role");
+//        String authorization= request.getHeader("Authorization");
+//        LOGGER.info("Username is : "+ id +"Role is : "+ role);
+//        User user = memberRepository.findByID(id, role);
+//        if (user != null) {
+//            return productService.getProducts();
+//        } else {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
+//        }
+//    }
     /*
     * Dont use this api
     * */
