@@ -103,11 +103,11 @@ public class ProductController {
             boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
             LOGGER.info("userRole: " + userRole + " , userId: " + userId);
             User user = memberRepository.findByUserId(userId);
-            if(user==null){
+            if (user == null) {
                 LOGGER.info("User not found");
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body("User not found");
             }
-            if(!userRole){
+            if (!userRole) {
                 LOGGER.info("User does not have permission");
                 return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("User does not have permission");
             }
@@ -122,34 +122,76 @@ public class ProductController {
 
     @GetMapping("/getProductsByCategory")
     public ResponseEntity<?> getProductsByCategory(HttpServletRequest request, HttpServletResponse response, @RequestParam String category) {
-        if(category==null || category.length()<=0){
+        if (category == null || category.length() <= 0) {
             return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("category is missing or invalid");
         }
         String authorization = request.getHeader("Authorization");
-        if(authorization == null || !authorization.startsWith("Bearer ")) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("Authorization token is not provided or invalid");
         }
         String token = authorization.substring(7);
-        try{
+        try {
             String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
             boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
             LOGGER.info("userRole: " + userRole + " , userId: " + userId);
             User user = memberRepository.findByUserId(userId);
-            if(user==null){
+            if (user == null) {
                 LOGGER.info("User not found");
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body("User not found");
             }
-            if(!userRole){
+            if (!userRole) {
                 LOGGER.info("User does not have permission");
                 return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("User does not have permission");
             }
             LOGGER.info("The userId and role is validated and getProductsByCategory endpoint is invoked");
             return productService.getProductsByCategory(category);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("Internal Server Error");
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body("Internal server error");
         }
+    }
+
+    @GetMapping("/getAllProductsUsingPagination")
+    public ResponseEntity<?> getAllProductsUsingPagination(HttpServletRequest request, HttpServletResponse response,
+                                                           @RequestParam int pageNumber,
+                                                           @RequestParam int size) {
+
+        if (pageNumber < 0) {
+            LOGGER.warn("The page number is less than 0 orinvalid");
+            return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("The page number is invalid");
+        }
+        if (size < 0) {
+            LOGGER.warn("The size is less than 0 orinvalid");
+            return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("The size is invalid");
+        }
+        String authorization = request.getHeader("Authorization");
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("Authorization token is not provided or invalid");
+        }
+        String token = authorization.substring(7);
+        try {
+            String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
+            boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
+            LOGGER.info("userRole: " + userRole + " , userId: " + userId);
+            User user = memberRepository.findByUserId(userId);
+            if (user == null) {
+                LOGGER.info("User not found");
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body("User not found");
+            }
+            if (!userRole) {
+                LOGGER.info("User does not have permission");
+                return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("User does not have permission");
+            }
+            LOGGER.info("The userId and role is validated and getAllProductsUsingPagination endpoint is invoked");
+            Pageable pageable = PageRequest.of(pageNumber, size);
+            return productService.getAllProductsUsingPagination(pageable);
+        } catch (Exception e) {
+            LOGGER.error("Internal Server Error");
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body("Internal server error");
+        }
+
+
     }
 
     @GetMapping("/getProductByMatchoperation")
@@ -160,28 +202,6 @@ public class ProductController {
     @GetMapping("/getProductByMutipleMatchoperation")
     public ResponseEntity<List<ProductDTO>> getProductByMutipleMatchoperation(String category, long price) {
         return productService.getProductByMutipleMatchoperation(category, price);
-    }
-
-
-    @GetMapping("/getAllProductsUsingPagination")
-    public ResponseEntity<?> getAllProductsUsingPagination(
-
-            @RequestParam int pageNumber,
-            @RequestParam int size) {
-        Pageable pageable = PageRequest.of(pageNumber, size);
-        return productService.getAllProductsUsingPagination(pageable);
-    }
-
-    @GetMapping("/getAllProductsUsingPaginationAndSorting")
-    public ResponseEntity<List<Product>> getAllProductsUsingPaginationAndSorting(
-            @RequestParam Sort.Direction direction,
-            @RequestParam String sortParam,
-            @RequestParam int pageNumber,
-            @RequestParam int size) {
-
-        Sort sort = Sort.by(direction, sortParam);
-        Pageable pageable = PageRequest.of(pageNumber, size, sort);
-        return productService.getAllProductsUsingPaginationAndSorting(pageable);
     }
 
 }
