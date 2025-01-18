@@ -150,11 +150,8 @@ public class CartController {
                 String orderedItemIdFromCart = newCart.getProductList().get(0).getProductId();
 
                 if (orderedItemIdFromCart != null) {
-                    boolean isUpdated = productRepository.findByProductIdAndUpdateQuantity(
-                            orderedItemIdFromCart,
-                            newCart.getProductList().get(0).getQuantity()
-                    );
-
+                    boolean isUpdated = cartService.isUpdated(orderedItemIdFromCart,
+                            newCart.getProductList().get(0).getQuantity());
                     if (isUpdated) {
                         cartRepository.save(updatedCart);
                         LOGGER.info("Product {} added to existing cart for user {}" + orderedItemIdFromCart + userId);
@@ -192,18 +189,16 @@ public class CartController {
         String authorization = request.getHeader("Authorization");
         LOGGER.info("Received request to get cart. Checking authorization...");
 
-        // Validate authorization header
         if (authorization == null || !authorization.startsWith("Bearer ") || authorization.length() <= 7) {
             LOGGER.warning("Authorization token is missing or invalid");
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
                     .body(new ApiResponse<>("The authorization token is not present or invalid", null));
         }
 
-        String token = authorization.substring(7); // Extract token
+        String token = authorization.substring(7);
         LOGGER.info("Authorization token extracted successfully.");
 
         try {
-            // Validate and extract user details from JWT
             String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
             boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
             LOGGER.info("JWT token validated. User ID: {}, Has required role: {}" + userId + userRole);

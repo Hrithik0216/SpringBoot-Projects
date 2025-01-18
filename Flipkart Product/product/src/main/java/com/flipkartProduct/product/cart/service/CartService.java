@@ -26,6 +26,14 @@ public class CartService implements CartServiceInterface {
     @Autowired
     private ProductRepository productRepository;
 
+
+    @Override
+    public boolean isUpdated(String productId, int orderedQuantity){
+        return productRepository.findByProductIdAndUpdateQuantity(
+                productId,
+                orderedQuantity);
+    }
+
     @Override
     public ResponseEntity<?> getCart(String userId) {
         return cartRepository.findCartByCustomerId(userId);

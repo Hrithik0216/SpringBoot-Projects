@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CartServiceInterface {
     ResponseEntity<?> getCart(String userId);
-
+    boolean isUpdated(String productId, int orderedQuantity);
     ResponseEntity<String> addToCart(Cart cart, String userId);
 
     ResponseEntity<String> removeFromCart(Cart cart);
