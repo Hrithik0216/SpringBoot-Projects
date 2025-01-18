@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/cart")
 public class CartController {
-
     private static final Logger LOGGER = Logger.getLogger(CartController.class.getName());
 
     @Autowired
@@ -110,10 +109,8 @@ public class CartController {
 
     @GetMapping("/getMyCart")
     public ResponseEntity<?> getCart(HttpServletRequest request) {
-
         String authorization = request.getHeader("Authorization");
         LOGGER.info("Received request to get cart. Checking authorization...");
-
         if (authorization == null || !authorization.startsWith("Bearer ") || authorization.length() <= 7) {
             LOGGER.warning("Authorization token is missing or invalid");
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
