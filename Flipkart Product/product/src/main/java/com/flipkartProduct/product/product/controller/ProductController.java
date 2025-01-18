@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 
 @RestController
@@ -43,15 +44,15 @@ public class ProductController {
 
     @GetMapping("/dummyToCheckLogger")
     public ResponseEntity<?> dummyToCheckLogger(HttpServletRequest request) {
-        String authorization= request.getHeader("Authorization");
-        if(authorization!=null && authorization.startsWith("Bearer ")) {
+        String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring(7);
-            try{
+            try {
                 String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
                 boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
-                LOGGER.info("userRole: "+userRole+" , userId: "+userId);
+                LOGGER.info("userRole: " + userRole + " , userId: " + userId);
                 return ResponseEntity.ok().body("Super");
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(e);
             }
         }
@@ -67,7 +68,7 @@ public class ProductController {
         if (user != null && user.equals("ROLE_ADMIN")) {
             if (productRepository.findBydataProductName(productName)) {
                 return productService.increaseProductByQuantity(product);
-            }else{
+            } else {
                 return productService.postAProduct(product);
             }
         }
@@ -90,65 +91,42 @@ public class ProductController {
      * Used this api for fetching all product details.
      * */
 
-//    @GetMapping("/getAllProductsById")
-//    public ResponseEntity<?> getAllProductsById(HttpServletResponse response, HttpServletRequest request) {
-//        String id = request.getHeader("userID");
-//        String role = request.getHeader("role");
-//        String authorization= request.getHeader("Authorization");
-//        LOGGER.info("Username is : "+ id +"Role is : "+ role);
-//        User user = memberRepository.findByID(id, role);
-//        if (user != null) {
-//            return productService.getProducts();
-//        } else {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
-//        }
-//    }
-
     @GetMapping("/getAllProductsById")
     public ResponseEntity<?> getAllProductsById(HttpServletResponse response, HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
-        if (authorization != null && authorization.startsWith("Bearer ")) {
-            String token = authorization.substring(7);
-            try {
-                String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
-                boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
-                LOGGER.info("userRole: " + userRole + " , userId: " + userId);
-                User user = memberRepository.findByUserId(userId);
-                if (user != null) {
-                    return productService.getProducts();
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
-                }
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("The authorization token is not provided");
         }
-        return ResponseEntity.badRequest().build();
+        String token = authorization.substring(7);
+        try {
+            String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
+            boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
+            LOGGER.info("userRole: " + userRole + " , userId: " + userId);
+            User user = memberRepository.findByUserId(userId);
+            if(user==null){
+                LOGGER.info("User not found");
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body("User not found");
+            }
+            if(!userRole){
+                LOGGER.info("User does not have permission");
+                return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("User does not have permission");
+            }
+            return productService.getProducts();
+
+        } catch (Exception e) {
+            LOGGER.error("Internal Server Error" + e.getMessage());
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body("Internal Server Error");
+        }
     }
 
-//        String id = request.getHeader("userID");
-//        String role = request.getHeader("role");
-//        String authorization= request.getHeader("Authorization");
-//        LOGGER.info("Username is : "+ id +"Role is : "+ role);
-//        User user = memberRepository.findByID(id, role);
-//        if (user != null) {
-//            return productService.getProducts();
-//        } else {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
-//        }
-//    }
     /*
-    * Dont use this api
-    * */
+     * Dont use this api
+     * */
     @GetMapping("/getAllProducts")
     public ResponseEntity<?> getAllProducts(HttpServletResponse response, HttpServletRequest request) {
         String userName = request.getHeader("username");
         String role = request.getHeader("role");
-        LOGGER.info("Username is : "+ userName +"Role is : "+ role);
+        LOGGER.info("Username is : " + userName + "Role is : " + role);
         User user = memberRepository.findByUsername(role, userName);
         if (user != null) {
             return productService.getProducts();
