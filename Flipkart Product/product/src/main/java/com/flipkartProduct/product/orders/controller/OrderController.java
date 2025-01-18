@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -36,52 +37,33 @@ public class OrderController {
     @Autowired
     FindingMemberUtills findingMemberUtills;
 
-
-//    @PostMapping("/placeOrder")
-//    public ResponseEntity<String> placeOrder(HttpServletResponse response, HttpServletRequest request, @RequestBody Map<String, String> orderDetails){
-//        String userId = request.getHeader("userId");
-//        String role = request.getHeader("role");
-//        String cartId = orderDetails.get("cartId");
-//        Optional<User> user = Optional.ofNullable(memberRepository.findByID(userId, role));
-//        if(user.isPresent()){
-//            Optional<Cart> cart = cartRepository.findById(cartId);
-//            System.out.println(cartId);
-//            if(cart.isPresent()){
-//                return orderService.placeOrder(cart.get());
-//            }else{
-//                return new ResponseEntity(HttpStatus.NOT_FOUND);
-//            }
-//        }else{
-//            return new ResponseEntity(HttpStatus.NOT_FOUND);
-//        }
-//    }
-
     @PostMapping("/placeOrder")
-    public ResponseEntity<?> placeOrder(HttpServletResponse response, HttpServletRequest request, @RequestBody OrderRequestBody order){
+    public ResponseEntity<?> placeOrder(HttpServletResponse response, HttpServletRequest request, @RequestBody OrderRequestBody order) {
+
         String authorization = request.getHeader("Authorization");
 
-        if(authorization==null || !authorization.startsWith("Bearer")){
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
             LOGGER.warning("Authorization header is incorrect");
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new ApiResponse<>("The auhtorization token is not provided or invalid",null));
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new ApiResponse<>("The auhtorization token is not provided or invalid", null));
         }
-        String token= authorization.substring(7);
-        try{
+        String token = authorization.substring(7);
+        try {
             String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
             boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
             User user = findingMemberUtills.findByUserId(userId);
 
-            if(user == null){
+            if (user == null) {
                 LOGGER.warning("User not found");
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new ApiResponse<>("User not found",null));
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new ApiResponse<>("User not found", null));
             }
-            if(!userRole){
+            if (!userRole) {
                 LOGGER.warning("The user does not have any authorized role");
-                return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new ApiResponse<>("The user is not authorized",null));
+                return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new ApiResponse<>("The user is not authorized", null));
             }
-           return orderService.placeOrder(order);
-        } catch(Exception e){
+            return orderService.placeOrder(order);
+        } catch (Exception e) {
             LOGGER.warning("Internal servor err: " + e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new ApiResponse<>("Internal Server err",null));
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new ApiResponse<>("Internal Server err", null));
         }
     }
 }
