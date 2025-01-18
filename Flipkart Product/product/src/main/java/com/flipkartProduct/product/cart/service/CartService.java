@@ -35,6 +35,16 @@ public class CartService implements CartServiceInterface {
     }
 
     @Override
+    public Cart findCartByUserId(String userId){
+        return cartRepository.findCartByUserId(userId);
+    }
+
+    @Override
+    public void saveCart(Cart cart){
+        cartRepository.save(cart);
+    }
+
+    @Override
     public ResponseEntity<?> getCart(String userId) {
         return cartRepository.findCartByCustomerId(userId);
     }

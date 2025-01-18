@@ -10,6 +10,8 @@ public interface CartServiceInterface {
     ResponseEntity<?> getCart(String userId);
     boolean isUpdated(String productId, int orderedQuantity);
     ResponseEntity<String> addToCart(Cart cart, String userId);
+    Cart findCartByUserId(String userId);
+    void saveCart(Cart cart);
 
     ResponseEntity<String> removeFromCart(Cart cart);
     ResponseEntity<String> updateCart(Cart cart);
