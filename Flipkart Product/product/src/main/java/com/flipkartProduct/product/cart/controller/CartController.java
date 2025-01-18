@@ -10,8 +10,6 @@ import com.mongodb.MongoException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +27,6 @@ public class CartController {
 
     @Autowired
     FindingMemberUtills findingMemberUtils;
-
-
-    @Autowired
-    @Qualifier("secondaryMongoTemplate")
-    private MongoTemplate secondaryMongoTemplate;
 
 
     /*
@@ -143,7 +136,7 @@ public class CartController {
 
             try {
                 LOGGER.info("Fetching user details from database for user ID: {}" + userId);
-                Optional<User> user = Optional.ofNullable(secondaryMongoTemplate.findById(userId, User.class));
+                Optional<User> user = Optional.ofNullable(findingMemberUtils.findByUserId(userId));
 
                 if (!user.isPresent()) {
                     LOGGER.warning("User not found in database for ID: {}" + userId);
