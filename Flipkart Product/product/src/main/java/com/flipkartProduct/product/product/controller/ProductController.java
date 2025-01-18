@@ -155,7 +155,9 @@ public class ProductController {
     @GetMapping("/getAllProductsUsingPagination")
     public ResponseEntity<?> getAllProductsUsingPagination(HttpServletRequest request, HttpServletResponse response,
                                                            @RequestParam int pageNumber,
-                                                           @RequestParam int size) {
+                                                           @RequestParam int size,
+                                                           @RequestParam String direction,
+                                                           @RequestParam String sortParam) {
 
         if (pageNumber < 0) {
             LOGGER.warn("The page number is less than 0 orinvalid");
@@ -184,7 +186,7 @@ public class ProductController {
                 return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("User does not have permission");
             }
             LOGGER.info("The userId and role is validated and getAllProductsUsingPagination endpoint is invoked");
-            Pageable pageable = PageRequest.of(pageNumber, size);
+            Pageable pageable = PageRequest.of(pageNumber, size,Sort.Direction.valueOf(direction),sortParam);
             return productService.getAllProductsUsingPagination(pageable);
         } catch (Exception e) {
             LOGGER.error("Internal Server Error");
