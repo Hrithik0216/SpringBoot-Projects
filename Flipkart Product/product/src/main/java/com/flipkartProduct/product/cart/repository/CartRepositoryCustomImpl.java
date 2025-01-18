@@ -22,23 +22,35 @@ public class CartRepositoryCustomImpl implements CartRepositoryCustom {
     @Autowired
     ProductRepository productRepository;
 
+//    @Override
+//    public ResponseEntity<CartDto> findCartByCustomerId(String customerId) {
+//        Query query = new Query(Criteria.where("userId").is(customerId)); // Updated field name
+//        Optional<Cart> cartOptional = Optional.ofNullable(primaryMongoTemplate.findOne(query, Cart.class));
+//        if (cartOptional.isPresent()) {
+//            Cart cart = cartOptional.get();
+//            String dataProductName = cart.getProductList().stream()
+//                    .map(CartItem::getDataProductName)
+//                    .findFirst().orElse("");
+//            Optional<Product> product = Optional.ofNullable(productRepository
+//                    .findBydataProductNameForProduct(dataProductName));
+//
+//            int quantity = cart.getProductList().stream().map(CartItem::getQuantity).findFirst().orElse(0);
+//            String price = cartOptional.get().getProductList().stream().map(CartItem::getPrice).findFirst().orElse("");
+//            CartDto cartDto = new CartDto(quantity, price,
+//                    product.map(Product::getProduct).orElse(""));
+//            return ResponseEntity.ok(cartDto);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+
     @Override
-    public ResponseEntity<CartDto> findCartByCustomerId(String customerId) {
+    public ResponseEntity<?> findCartByCustomerId(String customerId) {
         Query query = new Query(Criteria.where("userId").is(customerId)); // Updated field name
         Optional<Cart> cartOptional = Optional.ofNullable(primaryMongoTemplate.findOne(query, Cart.class));
         if (cartOptional.isPresent()) {
             Cart cart = cartOptional.get();
-            String dataProductName = cart.getProductList().stream()
-                    .map(CartItem::getDataProductName)
-                    .findFirst().orElse("");
-            Optional<Product> product = Optional.ofNullable(productRepository
-                    .findBydataProductNameForProduct(dataProductName));
-
-            int quantity = cart.getProductList().stream().map(CartItem::getQuantity).findFirst().orElse(0);
-            String price = cartOptional.get().getProductList().stream().map(CartItem::getPrice).findFirst().orElse("");
-            CartDto cartDto = new CartDto(quantity, price,
-                    product.map(Product::getProduct).orElse(""));
-            return ResponseEntity.ok(cartDto);
+            return ResponseEntity.ok(cart);
         } else {
             return ResponseEntity.notFound().build();
         }

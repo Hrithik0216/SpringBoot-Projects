@@ -10,6 +10,7 @@ import com.flipkartProduct.product.members.repository.MemberRepository;
 import com.flipkartProduct.product.members.repository.MemberRepositoryCustom;
 import com.flipkartProduct.product.product.repository.ProductRepository;
 import com.flipkartProduct.product.utils.JwtUtils;
+import com.mongodb.MongoException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.coyote.Response;
@@ -129,7 +130,7 @@ public class CartController {
             User user = memberRepository.findByUserId(userId);
 
             if (user == null) {
-                LOGGER.warning("User not found for userId: {}"+ userId);
+                LOGGER.warning("User not found for userId: {}" + userId);
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
                         .body(new ApiResponse<>("User not found", null));
             }
@@ -156,11 +157,11 @@ public class CartController {
 
                     if (isUpdated) {
                         cartRepository.save(updatedCart);
-                        LOGGER.info("Product {} added to existing cart for user {}"+ orderedItemIdFromCart+ userId);
+                        LOGGER.info("Product {} added to existing cart for user {}" + orderedItemIdFromCart + userId);
                         ApiResponse<Cart> responseBody = new ApiResponse<>("Added to an existing cart", updatedCart);
                         return ResponseEntity.ok(responseBody);
                     } else {
-                        LOGGER.warning("Failed to update product quantity for productId: {}"+ orderedItemIdFromCart);
+                        LOGGER.warning("Failed to update product quantity for productId: {}" + orderedItemIdFromCart);
                         return ResponseEntity.status(HttpServletResponse.SC_CONFLICT)
                                 .body(new ApiResponse<>("Failed to update product quantity", null));
                     }
@@ -173,42 +174,68 @@ public class CartController {
                 // Create new cart
                 newCart.setUser(userId);
                 cartRepository.save(newCart);
-                LOGGER.info("New cart created for user {}"+userId);
+                LOGGER.info("New cart created for user {}" + userId);
                 ApiResponse<Cart> responseBody = new ApiResponse<>("Added to a new cart", newCart);
                 return ResponseEntity.ok(responseBody);
             }
 
         } catch (Exception e) {
-            LOGGER.info("The error is"+ e.getMessage());
+            LOGGER.info("The error is" + e.getMessage());
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>("Error processing request", null));
         }
     }
 
-
-
     @GetMapping("/getMyCart")
-    public ResponseEntity<CartDto> getCart(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
+    public ResponseEntity<?> getCart(HttpServletRequest request) {
 
-        if (authorization != null && authorization.startsWith("Bearer ")) {
-            String token = authorization.substring(7);
+        String authorization = request.getHeader("Authorization");
+        LOGGER.info("Received request to get cart. Checking authorization...");
+
+        // Validate authorization header
+        if (authorization == null || !authorization.startsWith("Bearer ") || authorization.length() <= 7) {
+            LOGGER.warning("Authorization token is missing or invalid");
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
+                    .body(new ApiResponse<>("The authorization token is not present or invalid", null));
+        }
+
+        String token = authorization.substring(7); // Extract token
+        LOGGER.info("Authorization token extracted successfully.");
+
+        try {
+            // Validate and extract user details from JWT
             String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
             boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
-            if (userRole) {
-                try {
-                    Optional<User> user = Optional.of(secondaryMongoTemplate.findById(userId, User.class));
-                    if (user.isPresent()) {
-                        return cartService.getCart(userId);
-                    } else {
-                        return ResponseEntity.badRequest().build();
-                    }
-                } catch (Exception e) {
-                    LOGGER.info("The err is" + e);
-                }
+            LOGGER.info("JWT token validated. User ID: {}, Has required role: {}" + userId + userRole);
+
+            if (!userRole) {
+                LOGGER.warning("User ID {} does not have required permissions" + userId);
+                return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
+                        .body(new ApiResponse<>("User does not have permission", null));
             }
+
+            try {
+                LOGGER.info("Fetching user details from database for user ID: {}" + userId);
+                Optional<User> user = Optional.ofNullable(secondaryMongoTemplate.findById(userId, User.class));
+
+                if (!user.isPresent()) {
+                    LOGGER.warning("User not found in database for ID: {}" + userId);
+                    return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
+                            .body(new ApiResponse<>("User not found", null));
+                }
+                LOGGER.info("User found in database. Fetching cart details...");
+                return cartService.getCart(userId);
+
+            } catch (MongoException e) {
+                LOGGER.info("Database error while fetching user data: {}" + e.getMessage());
+                return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+                        .body(new ApiResponse<>("Database error occurred", null));
+            }
+
+        } catch (Exception e) {
+            LOGGER.info("Unexpected error occurred: {}" + e.getMessage());
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("Internal Server Error", null));
         }
-        LOGGER.info("Authorization is not provide to get cartdetails");
-        return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
     }
 }

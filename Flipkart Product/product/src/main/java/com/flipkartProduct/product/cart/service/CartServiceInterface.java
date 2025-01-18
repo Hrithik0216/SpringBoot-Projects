@@ -1,6 +1,5 @@
 package com.flipkartProduct.product.cart.service;
 
-import com.flipkartProduct.product.cart.DTO.CartDto;
 import com.flipkartProduct.product.cart.model.Cart;
 import com.flipkartProduct.product.cart.model.CartItem;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface CartServiceInterface {
-    ResponseEntity<CartDto> getCart(String userId);
+    ResponseEntity<?> getCart(String userId);
 
     ResponseEntity<String> addToCart(Cart cart, String userId);
 

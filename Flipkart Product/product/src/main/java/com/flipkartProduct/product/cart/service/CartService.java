@@ -1,7 +1,6 @@
 package com.flipkartProduct.product.cart.service;
 
 import com.flipkartProduct.product.product.repository.ProductRepository;
-import com.flipkartProduct.product.cart.DTO.CartDto;
 import com.flipkartProduct.product.cart.model.Cart;
 import com.flipkartProduct.product.cart.model.CartItem;
 import com.flipkartProduct.product.cart.repository.CartRepository;
@@ -9,9 +8,6 @@ import com.flipkartProduct.product.product.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.repository.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +27,7 @@ public class CartService implements CartServiceInterface {
     private ProductRepository productRepository;
 
     @Override
-    public ResponseEntity<CartDto> getCart(String userId) {
+    public ResponseEntity<?> getCart(String userId) {
         return cartRepository.findCartByCustomerId(userId);
     }
 
