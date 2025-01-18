@@ -4,10 +4,7 @@ import com.flipkartProduct.product.product.repository.ProductRepository;
 import com.flipkartProduct.product.cart.model.Cart;
 import com.flipkartProduct.product.cart.model.CartItem;
 import com.flipkartProduct.product.cart.repository.CartRepository;
-import com.flipkartProduct.product.product.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CartService implements CartServiceInterface {
-
-    @Autowired
-    @Qualifier("primaryMongoTemplate")
-    private MongoTemplate primaryMongoTemplate;
 
     @Autowired
     private CartRepository cartRepository;
@@ -47,40 +40,6 @@ public class CartService implements CartServiceInterface {
     @Override
     public ResponseEntity<?> getCart(String userId) {
         return cartRepository.findCartByCustomerId(userId);
-    }
-
-    @Override
-    public ResponseEntity<String> addToCart(Cart cart, String userId) {
-        List<CartItem> cartItems = cart.getProductList();
-        long quantity = cartItems.stream().mapToLong(CartItem::getQuantity).sum();
-        String productId = cartItems.stream()
-                .map(CartItem::getProductId)
-                .findFirst()
-                .orElse(null);
-        System.out.print(productId);
-        if (productId == null) {
-            return ResponseEntity.badRequest().body("Product ID is missing in the request.");
-        }
-        Optional<Product> productOptional = productRepository.findById(productId);
-        if (!productOptional.isPresent()) {
-            return ResponseEntity.badRequest().body("Product ID is invalid.");
-        }
-        Product product = productOptional.get();
-        if (product.getQuantity() < quantity) {
-            return ResponseEntity.badRequest().body("Insufficient stock for product:");
-        }
-        cartRepository.save(new Cart(userId, cart.getProductList()));
-        return ResponseEntity.ok().body("Product added to Cart");
-    }
-
-    @Override
-    public ResponseEntity<String> removeFromCart(Cart cart) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<String> updateCart(Cart cart) {
-        return null;
     }
 
     @Override
