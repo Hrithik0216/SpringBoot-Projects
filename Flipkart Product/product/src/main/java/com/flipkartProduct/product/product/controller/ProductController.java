@@ -147,7 +147,7 @@ public class ProductController {
             return productService.getProductsByCategory(category);
 
         } catch (Exception e) {
-            LOGGER.error("Internal Server Error");
+            LOGGER.error("Internal Server Error: "+e.getMessage());
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body("Internal server error");
         }
     }
@@ -185,11 +185,19 @@ public class ProductController {
                 LOGGER.info("User does not have permission");
                 return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("User does not have permission");
             }
+            Sort.Direction sortDirection =Sort.Direction.ASC;
+            try{
+                sortDirection = Sort.Direction.valueOf(direction.toUpperCase());
+
+            }catch (Exception e){
+                LOGGER.warn("Invalid direction for sorting" + e.getMessage());
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Invalid direction for sorting" + e.getMessage());
+            }
             LOGGER.info("The userId and role is validated and getAllProductsUsingPagination endpoint is invoked");
-            Pageable pageable = PageRequest.of(pageNumber, size,Sort.Direction.valueOf(direction),sortParam);
+            Pageable pageable = PageRequest.of(pageNumber, size, sortDirection,sortParam);
             return productService.getAllProductsUsingPagination(pageable);
         } catch (Exception e) {
-            LOGGER.error("Internal Server Error");
+            LOGGER.error("Internal Server Error: "+ e.getMessage());
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body("Internal server error");
         }
 
