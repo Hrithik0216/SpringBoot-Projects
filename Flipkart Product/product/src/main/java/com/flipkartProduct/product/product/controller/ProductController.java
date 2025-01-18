@@ -119,26 +119,37 @@ public class ProductController {
         }
     }
 
-    /*
-     * Dont use this api
-     * */
-    @GetMapping("/getAllProducts")
-    public ResponseEntity<?> getAllProducts(HttpServletResponse response, HttpServletRequest request) {
-        String userName = request.getHeader("username");
-        String role = request.getHeader("role");
-        LOGGER.info("Username is : " + userName + "Role is : " + role);
-        User user = memberRepository.findByUsername(role, userName);
-        if (user != null) {
-            return productService.getProducts();
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
-        }
-    }
 
     @GetMapping("/getProductsByCategory")
-    public ResponseEntity<List<Product>> getProductsByCategory(@RequestParam String category) {
-        return productService.getProductsByCategory(category);
+    public ResponseEntity<?> getProductsByCategory(HttpServletRequest request, HttpServletResponse response, @RequestParam String category) {
+        if(category==null || category.length()<=0){
+            return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("category is missing or invalid");
+        }
+        String authorization = request.getHeader("Authorization");
+        if(authorization == null || !authorization.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("Authorization token is not provided or invalid");
+        }
+        String token = authorization.substring(7);
+        try{
+            String userId = JwtUtils.validateJwtTokenAndGetUserId(token);
+            boolean userRole = JwtUtils.validateJwtTokenAndGetRoles(token);
+            LOGGER.info("userRole: " + userRole + " , userId: " + userId);
+            User user = memberRepository.findByUserId(userId);
+            if(user==null){
+                LOGGER.info("User not found");
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body("User not found");
+            }
+            if(!userRole){
+                LOGGER.info("User does not have permission");
+                return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).body("User does not have permission");
+            }
+            LOGGER.info("The userId and role is validated and getProductsByCategory endpoint is invoked");
+            return productService.getProductsByCategory(category);
+
+        }catch (Exception e){
+            LOGGER.error("Internal Server Error");
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body("Internal server error");
+        }
     }
 
     @GetMapping("/getProductByMatchoperation")
