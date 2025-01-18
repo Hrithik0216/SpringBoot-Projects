@@ -39,6 +39,10 @@ public class CartController {
             HttpServletResponse response,
             @RequestBody Cart newCart
     ) {
+        if(newCart.getProductList().size()<=0) {
+            LOGGER.warning("The cart is empty");
+            return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new ApiResponse<>("The cart is empty",null));
+        }
         String authorization = request.getHeader("Authorization");
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
