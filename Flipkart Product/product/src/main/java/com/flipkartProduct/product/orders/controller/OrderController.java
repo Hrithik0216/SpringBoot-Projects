@@ -60,7 +60,7 @@ public class OrderController {
                 LOGGER.warning("The user does not have any authorized role");
                 return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(new ApiResponse<>("The user is not authorized", null));
             }
-            return orderService.placeOrder(order);
+            return orderService.placeOrder(order, userId);
         } catch (Exception e) {
             LOGGER.warning("Internal servor err: " + e.getMessage());
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new ApiResponse<>("Internal Server err", null));

@@ -6,5 +6,5 @@ import com.flipkartProduct.product.orders.model.OrderRequestBody;
 import org.springframework.http.ResponseEntity;
 
 public interface OrderServiceInterface {
-    ResponseEntity<?> placeOrder(OrderRequestBody order);
+    ResponseEntity<?> placeOrder(OrderRequestBody order, String userId);
 }

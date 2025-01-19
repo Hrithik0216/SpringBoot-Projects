@@ -20,13 +20,13 @@ public class OrderService implements OrderServiceInterface {
     OrderRepository orderRepository;
 
     @Override
-    public ResponseEntity<?> placeOrder(OrderRequestBody order) {
-        if(order==null || order.getCartId()=="" || order.getTotalAmount()==0 || order.getUserId()==""){
+    public ResponseEntity<?> placeOrder(OrderRequestBody order, String userId) {
+        if(order==null || order.getCartId()=="" || order.getTotalAmount()==0 || userId==""){
             LOGGER.info("The order details are empty");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The order details are empty");
         }
         OrderModel orderModel = new OrderModel(
-                order.getUserId(),
+                userId,
                 order.getCartId(),
                 new Date(),
                 OrderStatus.CONFIRMED,

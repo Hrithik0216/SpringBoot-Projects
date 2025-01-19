@@ -85,7 +85,6 @@ public class ProductController {
             return ResponseEntity.ok().body("Added Products Successfully");
         }
         return ResponseEntity.badRequest().body("User is not admin");
-
     }
     /*
      * Used this api for fetching all product details.
