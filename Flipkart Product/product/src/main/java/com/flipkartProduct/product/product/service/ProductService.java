@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 
 @Service
 public class ProductService implements ProductServiceInterface {
+    private static final Logger LOGGER = Logger.getLogger(ProductService.class.getName());
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -35,17 +37,19 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public ResponseEntity<String> increaseProductByQuantity(Product product) {
         Query query = new Query(Criteria.where("dataProductName").is(product.getDataProductName()));
-        List<Product> result = mongoTemplate.find(query,Product.class);
-        long quantity= result.stream().mapToLong(Product::getQuantity).sum();
+        List<Product> result = mongoTemplate.find(query, Product.class);
+        long quantity = result.stream().mapToLong(Product::getQuantity).sum();
         Update update = new Update();
-        update.set("quantity", product.getQuantity()+quantity);
+        update.set("quantity", product.getQuantity() + quantity);
         mongoTemplate.updateFirst(query, update, Product.class);
+        LOGGER.info("updated the product quantity");
         return ResponseEntity.ok().body("Update the " + product.getProduct() + " by " + product.getQuantity());
     }
 
     @Override
     public ResponseEntity<String> postAProduct(Product product) {
         productRepository.save(product);
+        LOGGER.info("Saved the product");
         return ResponseEntity.ok("Product saved successfully");
     }
 
@@ -53,22 +57,29 @@ public class ProductService implements ProductServiceInterface {
     @Override
     public ResponseEntity<List<Product>> getAllProductsUsingPagination(Pageable pageable) {
         Page<Product> result = productRepository.findAll(pageable);
+        LOGGER.info("Found products using pagination with the following params: "
+                + "Page number: " + pageable.getPageNumber() + "\nPage size: "
+                + pageable.getPageSize() + "\nTotal number of products: "
+                + result.getTotalElements());
         return ResponseEntity.ok(result.getContent());
     }
 
     @Override
     public ResponseEntity<List<Product>> getAllProductsUsingPaginationAndSorting(Pageable pageable) {
         Page<Product> result = productRepository.findAll(pageable);
+        LOGGER.info("Found products using pagination with the following params: "
+                + "Page number: " + pageable.getPageNumber() + "\nPage size: "
+                + pageable.getPageSize() + "\nTotal number of products: "
+                + result.getTotalElements());
         return ResponseEntity.ok(result.getContent());
     }
 
 
-
     @Override
     public ResponseEntity<String> postProducts(List<Product> products) {
-        System.out.println("products"+ products.size()+" "+products);
-         productRepository.saveAll(products);
-         return ResponseEntity.ok().body("Product saved successfully");
+        System.out.println("products" + products.size() + " " + products);
+        productRepository.saveAll(products);
+        return ResponseEntity.ok().body("Product saved successfully");
     }
 
     @Override
@@ -93,8 +104,10 @@ public class ProductService implements ProductServiceInterface {
         List<Product> result = mongoTemplate.find(query, Product.class);
         List<Product> finalResult = result.stream().filter(product -> Integer.parseInt(product.getPrice()) > 60000).collect(Collectors.toList());
         if (finalResult.size() > 0) {
+            LOGGER.info("Found " + finalResult.size() + " products");
             return ResponseEntity.ok(finalResult);
         } else {
+            LOGGER.info("No products found");
             return ResponseEntity.notFound().build();
         }
     }
