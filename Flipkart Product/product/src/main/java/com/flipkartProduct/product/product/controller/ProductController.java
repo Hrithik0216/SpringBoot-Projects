@@ -187,7 +187,7 @@ public class ProductController {
             }
             Sort.Direction sortDirection =Sort.Direction.ASC;
             try{
-                sortDirection = Sort.Direction.valueOf(direction.toUpperCase());
+                sortDirection = Sort.Direction.fromString(direction);
 
             }catch (Exception e){
                 LOGGER.warn("Invalid direction for sorting" + e.getMessage());
