@@ -2,6 +2,7 @@ package Streams.realObjects;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,36 +33,37 @@ public class Execution {
         );
 
 
-        List<Employee> salaryMappedEmployees = employees.stream().map(emp -> new Employee(emp.getName(), emp.getEmployeeId(), emp.getSalary() * 2, emp.getExperiences())).collect(Collectors.toList());
-
-        System.out.println(salaryMappedEmployees);
-        
-
-        List<Employee> salaryMappedEmployeesAndUpperCaseTech = employees.stream()
-                .map(emp -> new Employee(
-                        emp.getName(),
-                        emp.getEmployeeId(),
-                        emp.getSalary(),
-                        emp.getExperiences().stream()
-                                .map(exp -> new Experience(
-                                        exp.getCompanyName(),
-                                        exp.getExperience(),
-                                        new Tech(
-                                                exp.getTechStack().getName().stream()
-                                                        .map(String::toUpperCase)
-                                                        .collect(Collectors.toList())
-                                        )
-                                ))
-                                .collect(Collectors.toList())
-                ))
-                .collect(Collectors.toList());
-
-
-        System.out.println(salaryMappedEmployeesAndUpperCaseTech);
-
+//        List<Employee> salaryMappedEmployees = employees.stream().map(emp -> new Employee(emp.getName(), emp.getEmployeeId(), emp.getSalary() * 2, emp.getExperiences())).collect(Collectors.toList());
+//        System.out.println(salaryMappedEmployees);
+//        List<Employee> salaryMappedEmployeesAndUpperCaseTech = employees.stream()
+//                .map(emp -> new Employee(
+//                        emp.getName(),
+//                        emp.getEmployeeId(),
+//                        emp.getSalary(),
+//                        emp.getExperiences().stream()
+//                                .map(exp -> new Experience(
+//                                        exp.getCompanyName(),
+//                                        exp.getExperience(),
+//                                        new Tech(
+//                                                exp.getTechStack().getName().stream()
+//                                                        .map(String::toUpperCase)
+//                                                        .collect(Collectors.toList())
+//                                        )
+//                                ))
+//                                .collect(Collectors.toList())
+//                ))
+//                .collect(Collectors.toList());
+//        System.out.println(salaryMappedEmployees);
 //        Stream stream = Stream.of(employee);
 //        stream.map(s->s.toString().toUpperCase()).forEach(System.out::println);
 //        List<String> finalTech= employee.getExperiences().stream().map(s->s.getTechStack().getName().toString().toLowerCase()).collect(Collectors.toList());
 //        System.out.println(finalTech);
+
+
+        Map<String, Integer> experiencePerEmployee = employees.stream().
+                collect(Collectors.
+                        toMap(e->e.getName(), e->e.getExperiences().stream().
+                                mapToInt(x->x.getExperience()).sum()));
+        System.out.println(experiencePerEmployee);
     }
 }
