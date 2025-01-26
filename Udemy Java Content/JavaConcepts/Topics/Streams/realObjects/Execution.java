@@ -119,13 +119,49 @@ public class Execution {
 //        System.out.println("Average salary: " + totalSalary/employees.size());
 
         //How can I calculate the total years of experience of all employees?
-        Map<String, Integer> totalYearsOfExperiences = employees.stream().collect(Collectors.toMap(e1->e1.getName(), e2->e2.getExperiences().stream().mapToInt(x->x.getExperience()).sum()));
-        int result=0;
-        for(Map.Entry<String,Integer> entry : totalYearsOfExperiences.entrySet()){
-            result+=entry.getValue();
-        }
-        System.out.println("Total number of experiences for all employees: " + result+" years");
+//        Map<String, Integer> totalYearsOfExperiences = employees.stream().collect(Collectors.toMap(e1->e1.getName(), e2->e2.getExperiences().stream().mapToInt(x->x.getExperience()).sum()));
+//        int result=0;
+//        for(Map.Entry<String,Integer> entry : totalYearsOfExperiences.entrySet()){
+//            result+=entry.getValue();
+//        }
+//        System.out.println("Total number of experiences for all employees: " + result+" years");
 
-
+        //How can I group employees based on their salary range (e.g., <30k, 30k-50k, >50k)?
+        Map<String, List<Employee>> mappedEmployese = employees.stream()
+                .collect(Collectors
+                        .groupingBy(e->{
+                            if(e.getSalary()<30000){
+                                return "<30k";
+                            }else if(e.getSalary()>=30000 && e.getSalary()<=50000){
+                                return "30k-50k";
+                            }else{
+                                return ">50k";
+                            }
+                        }));
+        //System.out.println(mappedEmployese);
+        mappedEmployese.forEach((k,v)->{
+            System.out.println("salary Range: "+k);
+            v.forEach(e->{
+                System.out.println(e.getName() +" "+ e.getSalary());
+            });
+            System.out.println("------------------");
+        });
     }
 }
+
+/*Left out problems
+ Filtering & Matching
+How can I find out if any employee has worked at "Google"?
+How can I check if all employees have a salary greater than 20,000?
+How can I check if no employee has worked at "Facebook"?
+How can I find the first employee who has worked at "Amazon"?
+How can I get a list of employees who have used "Java" in their tech stack?
+
+*  Advanced Grouping & Collectors
+How can I group employees by the number of years of experience?
+How can I create a map where the key is a technology and the value is a list of employees who have used it?
+How can I find the total experience for each employee?
+How can I get the company with the highest number of experienced employees?
+How can I find the top three highest-paid employees?
+*
+* */
