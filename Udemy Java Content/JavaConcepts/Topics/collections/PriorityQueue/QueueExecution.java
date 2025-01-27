@@ -4,7 +4,7 @@ import java.util.*;
 
 public class QueueExecution {
     public static void main(String[] args) {
-        Queue<Employee> priorityQueue = new PriorityQueue<>(Comparator.comparingDouble((Employee::getSalary)));
+        Queue<Employee> priorityQueue = new PriorityQueue<>((e1,e2)->(int)(e2.getSalary()- e1.getSalary()));
         priorityQueue.add(new Employee("Hrithik", 30000, 2));
         priorityQueue.add(new Employee("Harry", 32000, 3));
         priorityQueue.add(new Employee("Ananya", 28000, 1));

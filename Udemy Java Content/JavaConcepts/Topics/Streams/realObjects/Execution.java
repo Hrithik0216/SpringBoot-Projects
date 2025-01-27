@@ -2,6 +2,7 @@ package Streams.realObjects;
 
 import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -158,25 +159,25 @@ public class Execution {
         /*
          * How can I group employees based on their salary range (e.g., <30k, 30k-50k, >50k)?
          */
-        Map<String, List<Employee>> mappedEmployese = employees.stream()
-                .collect(Collectors
-                        .groupingBy(e->{
-                            if(e.getSalary()<30000){
-                                return "<30k";
-                            }else if(e.getSalary()>=30000 && e.getSalary()<=50000){
-                                return "30k-50k";
-                            }else{
-                                return ">50k";
-                            }
-                        }));
-        //System.out.println(mappedEmployese);
-        mappedEmployese.forEach((k,v)->{
-            System.out.println("salary Range: "+k);
-            v.forEach(e->{
-                System.out.println(e.getName() +" "+ e.getSalary());
-            });
-            System.out.println("------------------");
-        });
+//        Map<String, List<Employee>> mappedEmployese = employees.stream()
+//                .collect(Collectors
+//                        .groupingBy(e->{
+//                            if(e.getSalary()<30000){
+//                                return "<30k";
+//                            }else if(e.getSalary()>=30000 && e.getSalary()<=50000){
+//                                return "30k-50k";
+//                            }else{
+//                                return ">50k";
+//                            }
+//                        }));
+//        //System.out.println(mappedEmployese);
+//        mappedEmployese.forEach((k,v)->{
+//            System.out.println("salary Range: "+k);
+//            v.forEach(e->{
+//                System.out.println(e.getName() +" "+ e.getSalary());
+//            });
+//            System.out.println("------------------");
+//        });
     }
 }
 
