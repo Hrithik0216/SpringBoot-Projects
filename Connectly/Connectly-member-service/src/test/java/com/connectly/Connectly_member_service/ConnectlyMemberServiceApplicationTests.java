@@ -1,10 +1,10 @@
-package com.ProjectConnectly.Connectly;
+package com.connectly.Connectly_member_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ConnectlyApplicationTests {
+class ConnectlyMemberServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
