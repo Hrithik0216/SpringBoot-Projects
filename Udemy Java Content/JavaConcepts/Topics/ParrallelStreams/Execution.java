@@ -32,7 +32,7 @@ public class Execution {
                 .map(e -> e.getAge() + " Thread: " + Thread.currentThread().getName())
                 .collect(Collectors.toList());
         long timeThen = System.currentTimeMillis();
-        System.out.println("Total time: " + (timeNow - timeThen));
+        System.out.println("Total time: " + (timeThen - timeNow) + "ms\n");
 
         // Parallel Stream Execution
         timeNow = System.currentTimeMillis();
@@ -40,7 +40,9 @@ public class Execution {
                 .filter(student -> student.getAge() > 10).map(e -> e.getAge() + " Thread: " + Thread.currentThread().getName())
                 .collect(Collectors.toList());
         timeThen = System.currentTimeMillis();
-        System.out.println("Parallel Execution Time: " + (timeThen - timeNow) + " ms");
+        System.out.println("Total time: " + (timeThen - timeNow) + "ms\n");
         par.forEach(student -> System.out.println(student));
+
+
     }
 }

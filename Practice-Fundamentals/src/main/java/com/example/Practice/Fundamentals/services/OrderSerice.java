@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderSerice {
 
-    public String getAllOrders() {
-        return "Got all orders";
+    public void getAllOrders() {
+        System.out.println("Got all orders");
     }
 }

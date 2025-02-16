@@ -14,7 +14,7 @@ public class OrderController {
     @Autowired
     OrderSerice orderSerice;
     @GetMapping("/getAllOrders")
-    public String getAllOrders(){
-        return orderSerice.getAllOrders();
+    public void getAllOrders(){
+         orderSerice.getAllOrders();
     }
 }
